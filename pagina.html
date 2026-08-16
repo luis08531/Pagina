@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sin titulo</title>
+  <style>
+    :root {
+      --bg: #F4F1EA;
+      --surface: #FFFFFF;
+      --primary: #121212;
+      --accent: #25D366;
+      --accent-hover: #1EBE5D;
+      --muted: #767676;
+      --border: #E5E0D8;
+      --gold: #C5A059;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --font-serif: "Playfair Display", Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--primary);
+    }
+
+    .cart-btn {
+      position: relative;
+      background: none;
+      border: 1px solid var(--primary);
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .cart-btn:hover {
+      background: var(--primary);
+      color: var(--surface);
+    }
+
+    .cart-count {
+      background: var(--gold);
+      color: var(--surface);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+      background: #ECE9E2;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover img {
+      transform: scale(1.04);
+    }
+
+    .card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-price {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .btn-add {
+      background: var(--primary);
+      color: var(--surface);
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-add:hover {
+      background: #333333;
+    }
+
+    /* Lateral Carrito Drawer */
+    .cart-drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .cart-drawer-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 100%;
+      max-width: 450px;
+      height: 100%;
+      background: var(--surface);
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cart-drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h2 {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+    }
+
+    .close-drawer {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .drawer-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .cart-item-info {
+      flex-grow: 1;
+    }
+
+    .cart-item-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .cart-item-price {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #D32F2F;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .checkout-form {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px dashed var(--border);
+    }
+
+    .form-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .input-group {
+      margin-bottom: 0.8rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #FAFAFA;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #FFF;
+    }
+
+    .drawer-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      background: #FAFAF8;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .summary-line.total {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-send-wa {
+      width: 100%;
+      background: var(--accent);
+      color: #FFF;
+      border: none;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-send-wa:hover {
+      background: var(--accent-hover);
+    }
+
+    .empty-cart-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 3rem 0;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navegación -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">Sin titulo</a>
+      <button class="cart-btn" onclick="toggleCart()">
+        <span>Carrito</span>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Galería de Productos -->
+  <main class="container">
+    <div class="grid">
+
+      <!-- Producto 1 -->
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="Picsart_26-08-15_19-40-11-211.jpg" alt="Producto 1">
+        </div>
+        <div class="card-body">
+          <div class="card-footer">
+            <span class="card-price">$0 MXN</span>
+            <button class="btn-add" onclick="agregarAlCarrito('Pieza 1', 0, 'Picsart_26-08-15_19-40-11-211.jpg')">Agregar al Carrito</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Producto 2 -->
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="IMG-20260815-WA0019.jpg" alt="Producto 2">
+        </div>
+        <div class="card-body">
+          <div class="card-footer">
+            <span class="card-price">$0 MXN</span>
+            <button class="btn-add" onclick="agregarAlCarrito('Pieza 2', 0, 'IMG-20260815-WA0019.jpg')">Agregar al Carrito</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Producto 3 -->
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="IMG-20260815-WA0021.jpg" alt="Producto 3">
+        </div>
+        <div class="card-body">
+          <div class="card-footer">
+            <span class="card-price">$0 MXN</span>
+            <button class="btn-add" onclick="agregarAlCarrito('Pieza 3', 0, 'IMG-20260815-WA0021.jpg')">Agregar al Carrito</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Producto 4 -->
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="IMG-20260815-WA0020.jpg" alt="Producto 4">
+        </div>
+        <div class="card-body">
+          <div class="card-footer">
+            <span class="card-price">$0 MXN</span>
+            <button class="btn-add" onclick="agregarAlCarrito('Pieza 4', 0, 'IMG-20260815-WA0020.jpg')">Agregar al Carrito</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Producto 5 -->
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="Picsart_26-08-15_19-47-32-611.jpg" alt="Producto 5">
+        </div>
+        <div class="card-body">
+          <div class="card-footer">
+            <span class="card-price">$0 MXN</span>
+            <button class="btn-add" onclick="agregarAlCarrito('Pieza 5', 0, 'Picsart_26-08-15_19-47-32-611.jpg')">Agregar al Carrito</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Panel Lateral de Carrito -->
+  <div class="cart-drawer-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="drawer-header">
+      <h2>Carrito de Compra</h2>
+      <button class="close-drawer" onclick="toggleCart()">&times;</button>
+    </div>
+
+    <div class="drawer-content" id="drawerContent">
+      <div id="cartItemsContainer">
+        <p class="empty-cart-msg">Tu carrito está vacío.</p>
+      </div>
+
+      <form class="checkout-form" id="checkoutForm" style="display: none;">
+        <h3 class="form-title">Datos para la Entrega</h3>
+        <div class="input-group">
+          <input type="text" id="custName" placeholder="Nombre completo" required>
+        </div>
+        <div class="input-group">
+          <input type="tel" id="custPhone" placeholder="Teléfono de contacto" required>
+        </div>
+        <div class="input-group">
+          <input type="text" id="custAddress" placeholder="Calle, Número y Colonia" required>
+        </div>
+        <div class="input-group">
+          <input type="text" id="custCP" placeholder="Código Postal (5 dígitos)" maxlength="5" required>
+        </div>
+        <div class="input-group">
+          <input type="text" id="custCity" placeholder="Ciudad y Estado" required>
+        </div>
+      </form>
+    </div>
+
+    <div class="drawer-footer" id="drawerFooter" style="display: none;">
+      <div class="summary-line">
+        <span>Subtotal</span>
+        <span id="subtotalVal">$0 MXN</span>
+      </div>
+      <div class="summary-line">
+        <span>Envío</span>
+        <span>A convenir</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total</span>
+        <span id="totalVal">$0 MXN</span>
+      </div>
+
+      <button class="btn-send-wa" onclick="enviarPedidoWhatsApp()">
+        <span>Enviar Pedido por WhatsApp</span> 📲
+      </button>
+    </div>
+  </aside>
+
+  <script>
+    const WHATSAPP_PHONE = "5213311848518";
+
+    let cart = [];
+
+    function toggleCart() {
+      document.getElementById('cartOverlay').classList.toggle('active');
+      document.getElementById('cartDrawer').classList.toggle('active');
+    }
+
+    function agregarAlCarrito(nombre, precio, img) {
+      const itemExistente = cart.find(p => p.nombre === nombre);
+      if (itemExistente) {
+        itemExistente.cantidad++;
+      } else {
+        cart.push({ nombre, precio, img, cantidad: 1 });
+      }
+      actualizarCarritoUI();
+      toggleCart();
+    }
+
+    function removerDelCarrito(nombre) {
+      cart = cart.filter(p => p.nombre !== nombre);
+      actualizarCarritoUI();
+    }
+
+    function actualizarCarritoUI() {
+      const container = document.getElementById('cartItemsContainer');
+      const cartCount = document.getElementById('cartCount');
+      const checkoutForm = document.getElementById('checkoutForm');
+      const drawerFooter = document.getElementById('drawerFooter');
+
+      const totalItems = cart.reduce((acc, item) => acc + item.cantidad, 0);
+      cartCount.innerText = totalItems;
+
+      if (cart.length === 0) {
+        container.innerHTML = '<p class="empty-cart-msg">Tu carrito está vacío.</p>';
+        checkoutForm.style.display = 'none';
+        drawerFooter.style.display = 'none';
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <img src="${item.img}" alt="${item.nombre}">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.nombre}</div>
+            <div class="cart-item-price">Cant: ${item.cantidad} x $${item.precio.toLocaleString()} MXN</div>
+          </div>
+          <button class="btn-remove" onclick="removerDelCarrito('${item.nombre}')">Eliminar</button>
+        </div>
+      `).join('');
+
+      const total = cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+      document.getElementById('subtotalVal').innerText = `$${total.toLocaleString()} MXN`;
+      document.getElementById('totalVal').innerText = `$${total.toLocaleString()} MXN`;
+
+      checkoutForm.style.display = 'block';
+      drawerFooter.style.display = 'block';
+    }
+
+    function enviarPedidoWhatsApp() {
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const address = document.getElementById('custAddress').value.trim();
+      const cp = document.getElementById('custCP').value.trim();
+      const city = document.getElementById('custCity').value.trim();
+
+      if (!name || !address || !cp) {
+        alert("Por favor completa los campos obligatorios de entrega (Nombre, Dirección y Código Postal).");
+        return;
+      }
+
+      let resumenProductos = "";
+      let totalPagar = 0;
+
+      cart.forEach((item, index) => {
+        const sub = item.precio * item.cantidad;
+        totalPagar += sub;
+        resumenProductos += `${index + 1}. *${item.nombre}* (x${item.cantidad}) - $${sub.toLocaleString()} MXN%0A`;
+      });
+
+      const mensajeWA = `*¡NUEVO PEDIDO DESDE LA WEB!*%0A%0A` +
+        `*--- PIEZAS SELECCIONADAS ---*%0A` +
+        `${resumenProductos}%0A` +
+        `*TOTAL ESTIMADO:* $${totalPagar.toLocaleString()} MXN%0A%0A` +
+        `*--- DATOS DE ENTREGA ---*%0A` +
+        `*Cliente:* ${name}%0A` +
+        `*Teléfono:* ${phone}%0A` +
+        `*Dirección:* ${address}%0A` +
+        `*C.P.:* ${cp}%0A` +
+        `*Ciudad/Estado:* ${city}`;
+
+      const link = `https://wa.me/${WHATSAPP_PHONE}?text=${mensajeWA}`;
+      window.open(link, '_blank');
+    }
+  </script>
+</body>
+</html>
