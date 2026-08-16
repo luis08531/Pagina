@@ -579,9 +579,9 @@
         </div>
 
         <div class="input-group">
-          <label>Teléfono de Contacto *</label>
-          <input type="tel" id="custPhone" placeholder="10 dígitos" required>
-          <span class="error-msg" id="errPhone">Ingresa un número válido de 10 dígitos.</span>
+          <label>Números de Contacto (Mínimo 2) *</label>
+          <input type="text" id="custPhones" placeholder="Ej. 3312345678, 3387654321" required>
+          <span class="error-msg" id="errPhones">Ingresa al menos 2 números válidos de 10 dígitos (separados por coma o espacio).</span>
         </div>
 
         <div class="input-group">
@@ -725,7 +725,7 @@
 
     function enviarPedidoWhatsApp() {
       const name = document.getElementById('custName').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
+      const rawPhones = document.getElementById('custPhones').value.trim();
       const address = document.getElementById('custAddress').value.trim();
       const cp = document.getElementById('custCP').value.trim();
       const city = document.getElementById('custCity').value.trim();
@@ -738,8 +738,10 @@
         esValido = false;
       }
 
-      if (!phone || !/^\d{10}$/.test(phone.replace(/\s+/g, ''))) {
-        document.getElementById('errPhone').style.display = 'block';
+      // Extraer números limpios de 10 dígitos o más
+      const phoneArray = rawPhones.split(/[,/\s]+/).map(p => p.replace(/\D/g, '')).filter(p => p.length >= 10);
+      if (phoneArray.length < 2) {
+        document.getElementById('errPhones').style.display = 'block';
         esValido = false;
       }
 
@@ -769,13 +771,15 @@
         resumenProductos += `${index + 1}. *${item.nombre}* (x${item.cantidad}) - $${sub.toLocaleString()} MXN%0A`;
       });
 
+      const listaTelefonos = phoneArray.map((tel, idx) => ` Teléfono ${idx + 1}: ${tel}`).join('%0A');
+
       const mensajeWA = `*¡NUEVO PEDIDO DESDE LA WEB!*%0A%0A` +
         `*--- PIEZAS SELECCIONADAS ---*%0A` +
         `${resumenProductos}%0A` +
         `*TOTAL ESTIMADO:* $${totalPagar.toLocaleString()} MXN%0A%0A` +
         `*--- DATOS DE ENTREGA ---*%0A` +
         `*Cliente:* ${name}%0A` +
-        `*Teléfono:* ${phone}%0A` +
+        `*Contactos:*%0A${listaTelefonos}%0A` +
         `*Dirección:* ${address}%0A` +
         `*C.P.:* ${cp}%0A` +
         `*Ciudad/Estado:* ${city}`;
