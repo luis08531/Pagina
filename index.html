@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Galería & Boutique</title>
+  <title>Sin Título</title>
   <style>
     :root {
-      --bg: #0F0F11;
-      --surface: #18181C;
-      --surface-card: #202026;
-      --primary: #FFFFFF;
-      --accent: #25D366;
-      --accent-hover: #1EBE5D;
-      --gold: #D4AF37;
-      --gold-glow: rgba(212, 175, 55, 0.25);
-      --muted: #A0A0AB;
-      --border: #2A2A32;
-      --shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text-dark: #111827;
+      --blue-chicle: #00B4D8;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --accent-wa: #25D366;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
       --font-serif: "Playfair Display", Georgia, serif;
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
@@ -29,23 +26,22 @@
 
     body {
       background-color: var(--bg);
-      color: var(--primary);
+      color: var(--text-dark);
       font-family: var(--font-sans);
       line-height: 1.6;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Header Nav con Blur */
+    /* Header Nav Glassmorphism en Fondo Blanco */
     header {
       position: sticky;
       top: 0;
-      background: rgba(15, 15, 17, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       z-index: 100;
-      transition: all 0.3s ease;
     }
 
     .nav-container {
@@ -59,41 +55,37 @@
 
     .logo {
       font-family: var(--font-serif);
-      font-size: 1.4rem;
-      font-weight: 600;
-      letter-spacing: 3px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
       text-transform: uppercase;
       text-decoration: none;
-      color: var(--primary);
-      background: linear-gradient(135deg, #FFF 0%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-dark);
     }
 
     .cart-btn {
       position: relative;
-      background: var(--surface-card);
+      background: #F3F4F6;
       border: 1px solid var(--border);
-      color: var(--primary);
+      color: var(--text-dark);
       padding: 0.6rem 1.4rem;
       border-radius: 30px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
     }
 
     .cart-btn:hover {
-      border-color: var(--gold);
-      box-shadow: 0 0 15px var(--gold-glow);
+      background: #E5E7EB;
       transform: translateY(-2px);
     }
 
     .cart-count {
-      background: var(--gold);
-      color: #000;
+      background: var(--blue-chicle);
+      color: #FFF;
       border-radius: 50%;
       width: 22px;
       height: 22px;
@@ -104,7 +96,7 @@
       font-weight: bold;
     }
 
-    /* Galería Layout */
+    /* Layout Galería */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -113,54 +105,49 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 2.5rem;
     }
 
-    /* Tarjetas de Producto con Animaciones */
-    .card {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow);
-      position: relative;
+    /* Carta Flip 3D */
+    .card-container {
+      perspective: 1000px;
+      height: 480px;
       opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 0.3s ease,
-                  box-shadow 0.3s ease;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      cursor: pointer;
     }
 
-    .card.visible {
+    .card-container.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    .card:hover {
-      transform: translateY(-10px) scale(1.02);
-      border-color: var(--gold);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px var(--gold-glow);
+    .card-flipper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
     }
 
-    /* Tag de Número flotante */
-    .card-badge {
+    .card-container.flipped .card-flipper {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
       position: absolute;
-      top: 15px;
-      left: 15px;
-      background: rgba(15, 15, 17, 0.75);
-      backdrop-filter: blur(8px);
-      color: var(--gold);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      z-index: 10;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .card-img-wrap {
@@ -168,25 +155,27 @@
       width: 100%;
       height: 380px;
       overflow: hidden;
-      background: #121215;
+      background-color: #F9FAFB;
     }
 
-    .card img {
+    .card-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.5s ease;
     }
 
-    .card:hover img {
-      transform: scale(1.08);
+    .card-container:hover img {
+      transform: scale(1.05);
     }
 
     .card-body {
-      padding: 1.5rem;
+      padding: 1rem 1.2rem;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       flex-grow: 1;
+      background: #FFFFFF;
     }
 
     .card-footer {
@@ -195,44 +184,76 @@
       align-items: center;
     }
 
-    .card-price {
-      font-size: 1.3rem;
+    .product-title {
+      font-size: 1.15rem;
       font-weight: 700;
-      color: var(--primary);
+      color: var(--blue-chicle);
     }
 
     .btn-add {
-      background: linear-gradient(135deg, #2A2A35 0%, #1A1A22 100%);
-      color: var(--primary);
-      border: 1px solid var(--border);
-      padding: 0.75rem 1.3rem;
+      background: var(--text-dark);
+      color: #FFF;
+      border: none;
+      padding: 0.65rem 1.2rem;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.2s ease, transform 0.1s;
     }
 
-    .card:hover .btn-add {
-      background: var(--gold);
-      color: #000;
-      border-color: var(--gold);
-      font-weight: 700;
+    .btn-add:hover {
+      background: #000;
+      transform: scale(1.04);
     }
 
-    .btn-add:active {
-      transform: scale(0.95);
+    .card-back {
+      transform: rotateY(180deg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #FFFFFF;
+      text-align: center;
     }
 
-    /* Drawer de Carrito */
+    .back-title {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      color: var(--blue-chicle);
+      margin-top: 1rem;
+    }
+
+    .back-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-style: italic;
+      margin: auto 0;
+      padding: 1.5rem;
+      border: 1px dashed #D1D5DB;
+      border-radius: 12px;
+      background: #F9FAFB;
+    }
+
+    .btn-back {
+      background: var(--text-dark);
+      color: #FFF;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Carrito Drawer */
     .cart-drawer-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(5px);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
       z-index: 200;
       opacity: 0;
       pointer-events: none;
@@ -247,16 +268,15 @@
     .cart-drawer {
       position: fixed;
       top: 0;
-      right: -450px;
+      right: -480px;
       width: 100%;
       max-width: 450px;
       height: 100%;
-      background: var(--surface);
-      border-left: 1px solid var(--border);
+      background: #FFFFFF;
       z-index: 201;
       display: flex;
       flex-direction: column;
-      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
       transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -266,16 +286,10 @@
 
     .drawer-header {
       padding: 1.5rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #E5E7EB;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .drawer-header h2 {
-      font-family: var(--font-serif);
-      font-size: 1.3rem;
-      color: var(--gold);
     }
 
     .close-drawer {
@@ -284,11 +298,36 @@
       font-size: 1.8rem;
       cursor: pointer;
       color: var(--muted);
-      transition: color 0.2s;
     }
 
-    .close-drawer:hover {
-      color: var(--primary);
+    /* Carga de Puntos */
+    .loader-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 0;
+      gap: 1rem;
+    }
+
+    .dots-loader {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #D1D5DB;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      to { transform: translateY(-10px); background: var(--blue-chicle); }
     }
 
     .drawer-content {
@@ -302,133 +341,78 @@
       gap: 12px;
       margin-bottom: 1.2rem;
       padding-bottom: 1.2rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid #E5E7EB;
       align-items: center;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateX(10px); }
-      to { opacity: 1; transform: translateX(0); }
     }
 
     .cart-item img {
-      width: 70px;
-      height: 70px;
+      width: 65px;
+      height: 65px;
       object-fit: cover;
       border-radius: 8px;
-      border: 1px solid var(--border);
     }
 
-    .cart-item-info {
-      flex-grow: 1;
-    }
-
-    .cart-item-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .cart-item-price {
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
+    .cart-item-info { flex-grow: 1; }
+    .cart-item-title { font-weight: 600; font-size: 0.95rem; color: var(--blue-chicle); }
+    .cart-item-price { color: var(--muted); font-size: 0.85rem; }
 
     .btn-remove {
       background: none;
       border: none;
-      color: #FF5252;
+      color: #EF4444;
       font-size: 0.8rem;
       cursor: pointer;
-      padding: 4px;
     }
 
+    /* Formulario Estricto */
     .checkout-form {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
-      border-top: 1px dashed var(--border);
+      border-top: 2px dashed #E5E7EB;
     }
 
     .form-title {
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-weight: 600;
-      color: var(--gold);
+      font-weight: 700;
       margin-bottom: 1rem;
     }
 
-    .input-group {
-      margin-bottom: 0.8rem;
-    }
-
+    .input-group { margin-bottom: 0.9rem; }
+    .input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
     .input-group input {
       width: 100%;
       padding: 0.75rem;
-      border: 1px solid var(--border);
+      border: 1px solid #D1D5DB;
       border-radius: 8px;
       font-size: 0.9rem;
-      background: #101014;
-      color: var(--primary);
-      transition: border-color 0.2s;
+      background: #F9FAFB;
     }
 
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
+    .input-group input:focus { outline: none; border-color: var(--blue-chicle); background: #FFF; }
+    .error-msg { color: #EF4444; font-size: 0.75rem; display: none; margin-top: 3px; }
 
-    .drawer-footer {
-      padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      background: #141418;
-    }
-
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .summary-line.total {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-top: 0.5rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid var(--border);
-    }
+    .drawer-footer { padding: 1.5rem; border-top: 1px solid #E5E7EB; background: #F9FAFB; }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.4rem; color: var(--muted); }
+    .summary-line.total { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #E5E7EB; }
 
     .btn-send-wa {
       width: 100%;
-      background: var(--accent);
+      background: var(--accent-wa);
       color: #FFF;
       border: none;
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       margin-top: 1rem;
-      transition: all 0.3s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
+      transition: all 0.3s;
     }
 
-    .btn-send-wa:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 0 20px rgba(37, 211, 102, 0.3);
-    }
-
-    .empty-cart-msg {
-      text-align: center;
-      color: var(--muted);
-      padding: 3rem 0;
-    }
+    .btn-send-wa:hover { background: #1EBE5D; }
+    .empty-cart-msg { text-align: center; color: var(--muted); padding: 3rem 0; }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 </head>
@@ -437,7 +421,7 @@
   <!-- Header -->
   <header>
     <div class="nav-container">
-      <a href="#" class="logo">Galería</a>
+      <a href="#" class="logo">Sin Título</a>
       <button class="cart-btn" onclick="toggleCart()">
         <span>Carrito</span>
         <span class="cart-count" id="cartCount">0</span>
@@ -445,90 +429,139 @@
     </div>
   </header>
 
-  <!-- Galería de Fotos (1.jpg a 5.jpg) -->
+  <!-- Productos (Pieza 1 a Pieza 5) -->
   <main class="container">
     <div class="grid">
 
-      <!-- Producto 1 -->
-      <article class="card">
-        <span class="card-badge">#01</span>
-        <div class="card-img-wrap">
-          <img src="1.jpg" alt="Pieza 1">
-        </div>
-        <div class="card-body">
-          <div class="card-footer">
-            <span class="card-price">$0 MXN</span>
-            <button class="btn-add" onclick="agregarAlCarrito('Pieza 1', 0, '1.jpg')">Agregar al Carrito</button>
+      <!-- Pieza 1 -->
+      <div class="card-container" id="card-1" onclick="flipCard('card-1')">
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="card-img-wrap">
+              <img src="1.jpg" alt="Pieza 1">
+            </div>
+            <div class="card-body">
+              <div class="card-footer">
+                <span class="product-title">Pieza 1</span>
+                <button class="btn-add" onclick="event.stopPropagation(); agregarAlCarrito('Pieza 1', 0, '1.jpg')">Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <h3 class="back-title">Pieza 1</h3>
+            <div class="back-desc">Sin descripción por el momento</div>
+            <button class="btn-back" onclick="event.stopPropagation(); flipCard('card-1')">Atrás</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <!-- Producto 2 -->
-      <article class="card">
-        <span class="card-badge">#02</span>
-        <div class="card-img-wrap">
-          <img src="2.jpg" alt="Pieza 2">
-        </div>
-        <div class="card-body">
-          <div class="card-footer">
-            <span class="card-price">$0 MXN</span>
-            <button class="btn-add" onclick="agregarAlCarrito('Pieza 2', 0, '2.jpg')">Agregar al Carrito</button>
+      <!-- Pieza 2 -->
+      <div class="card-container" id="card-2" onclick="flipCard('card-2')">
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="card-img-wrap">
+              <img src="2.jpg" alt="Pieza 2">
+            </div>
+            <div class="card-body">
+              <div class="card-footer">
+                <span class="product-title">Pieza 2</span>
+                <button class="btn-add" onclick="event.stopPropagation(); agregarAlCarrito('Pieza 2', 0, '2.jpg')">Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <h3 class="back-title">Pieza 2</h3>
+            <div class="back-desc">Sin descripción por el momento</div>
+            <button class="btn-back" onclick="event.stopPropagation(); flipCard('card-2')">Atrás</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <!-- Producto 3 -->
-      <article class="card">
-        <span class="card-badge">#03</span>
-        <div class="card-img-wrap">
-          <img src="3.jpg" alt="Pieza 3">
-        </div>
-        <div class="card-body">
-          <div class="card-footer">
-            <span class="card-price">$0 MXN</span>
-            <button class="btn-add" onclick="agregarAlCarrito('Pieza 3', 0, '3.jpg')">Agregar al Carrito</button>
+      <!-- Pieza 3 -->
+      <div class="card-container" id="card-3" onclick="flipCard('card-3')">
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="card-img-wrap">
+              <img src="3.jpg" alt="Pieza 3">
+            </div>
+            <div class="card-body">
+              <div class="card-footer">
+                <span class="product-title">Pieza 3</span>
+                <button class="btn-add" onclick="event.stopPropagation(); agregarAlCarrito('Pieza 3', 0, '3.jpg')">Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <h3 class="back-title">Pieza 3</h3>
+            <div class="back-desc">Sin descripción por el momento</div>
+            <button class="btn-back" onclick="event.stopPropagation(); flipCard('card-3')">Atrás</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <!-- Producto 4 -->
-      <article class="card">
-        <span class="card-badge">#04</span>
-        <div class="card-img-wrap">
-          <img src="4.jpg" alt="Pieza 4">
-        </div>
-        <div class="card-body">
-          <div class="card-footer">
-            <span class="card-price">$0 MXN</span>
-            <button class="btn-add" onclick="agregarAlCarrito('Pieza 4', 0, '4.jpg')">Agregar al Carrito</button>
+      <!-- Pieza 4 -->
+      <div class="card-container" id="card-4" onclick="flipCard('card-4')">
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="card-img-wrap">
+              <img src="4.jpg" alt="Pieza 4">
+            </div>
+            <div class="card-body">
+              <div class="card-footer">
+                <span class="product-title">Pieza 4</span>
+                <button class="btn-add" onclick="event.stopPropagation(); agregarAlCarrito('Pieza 4', 0, '4.jpg')">Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <h3 class="back-title">Pieza 4</h3>
+            <div class="back-desc">Sin descripción por el momento</div>
+            <button class="btn-back" onclick="event.stopPropagation(); flipCard('card-4')">Atrás</button>
           </div>
         </div>
-      </article>
+      </div>
 
-      <!-- Producto 5 -->
-      <article class="card">
-        <span class="card-badge">#05</span>
-        <div class="card-img-wrap">
-          <img src="5.jpg" alt="Pieza 5">
-        </div>
-        <div class="card-body">
-          <div class="card-footer">
-            <span class="card-price">$0 MXN</span>
-            <button class="btn-add" onclick="agregarAlCarrito('Pieza 5', 0, '5.jpg')">Agregar al Carrito</button>
+      <!-- Pieza 5 -->
+      <div class="card-container" id="card-5" onclick="flipCard('card-5')">
+        <div class="card-flipper">
+          <div class="card-front">
+            <div class="card-img-wrap">
+              <img src="5.jpg" alt="Pieza 5">
+            </div>
+            <div class="card-body">
+              <div class="card-footer">
+                <span class="product-title">Pieza 5</span>
+                <button class="btn-add" onclick="event.stopPropagation(); agregarAlCarrito('Pieza 5', 0, '5.jpg')">Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <h3 class="back-title">Pieza 5</h3>
+            <div class="back-desc">Sin descripción por el momento</div>
+            <button class="btn-back" onclick="event.stopPropagation(); flipCard('card-5')">Atrás</button>
           </div>
         </div>
-      </article>
+      </div>
 
     </div>
   </main>
 
-  <!-- Panel Carrito -->
+  <!-- Carrito Drawer -->
   <div class="cart-drawer-overlay" id="cartOverlay" onclick="toggleCart()"></div>
   
   <aside class="cart-drawer" id="cartDrawer">
     <div class="drawer-header">
-      <h2>Carrito de Compra</h2>
+      <h2>Tu Carrito</h2>
       <button class="close-drawer" onclick="toggleCart()">&times;</button>
+    </div>
+
+    <div class="loader-container" id="loader">
+      <div class="dots-loader">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <span style="font-size: 0.85rem; color: var(--muted);">Cargando tu carrito...</span>
     </div>
 
     <div class="drawer-content" id="drawerContent">
@@ -536,22 +569,37 @@
         <p class="empty-cart-msg">Tu carrito está vacío.</p>
       </div>
 
-      <form class="checkout-form" id="checkoutForm" style="display: none;">
-        <h3 class="form-title">Datos para la Entrega</h3>
+      <form class="checkout-form" id="checkoutForm" style="display: none;" onsubmit="return false;">
+        <h3 class="form-title">Datos Obligatorios de Entrega</h3>
+        
         <div class="input-group">
-          <input type="text" id="custName" placeholder="Nombre completo" required>
+          <label>Nombre y Apellido *</label>
+          <input type="text" id="custName" placeholder="Ej. Juan Pérez" required>
+          <span class="error-msg" id="errName">Ingresa tu nombre completo (nombre y apellido).</span>
         </div>
+
         <div class="input-group">
-          <input type="tel" id="custPhone" placeholder="Teléfono de contacto" required>
+          <label>Teléfono de Contacto *</label>
+          <input type="tel" id="custPhone" placeholder="10 dígitos" required>
+          <span class="error-msg" id="errPhone">Ingresa un número válido de 10 dígitos.</span>
         </div>
+
         <div class="input-group">
-          <input type="text" id="custAddress" placeholder="Calle, Número y Colonia" required>
+          <label>Dirección Completa *</label>
+          <input type="text" id="custAddress" placeholder="Calle, número y colonia" required>
+          <span class="error-msg" id="errAddress">La dirección es obligatoria.</span>
         </div>
+
         <div class="input-group">
-          <input type="text" id="custCP" placeholder="Código Postal (5 dígitos)" maxlength="5" required>
+          <label>Código Postal *</label>
+          <input type="text" id="custCP" placeholder="5 dígitos" maxlength="5" required>
+          <span class="error-msg" id="errCP">Ingresa un C.P. válido de 5 números.</span>
         </div>
+
         <div class="input-group">
-          <input type="text" id="custCity" placeholder="Ciudad y Estado" required>
+          <label>Ciudad y Estado *</label>
+          <input type="text" id="custCity" placeholder="Ej. Guadalajara, Jalisco" required>
+          <span class="error-msg" id="errCity">La ciudad/estado es obligatoria.</span>
         </div>
       </form>
     </div>
@@ -561,27 +609,23 @@
         <span>Subtotal</span>
         <span id="subtotalVal">$0 MXN</span>
       </div>
-      <div class="summary-line">
-        <span>Envío</span>
-        <span>A convenir</span>
-      </div>
       <div class="summary-line total">
         <span>Total</span>
         <span id="totalVal">$0 MXN</span>
       </div>
 
       <button class="btn-send-wa" onclick="enviarPedidoWhatsApp()">
-        <span>Enviar Pedido por WhatsApp</span> 📲
+        <span>Enviar Pedido por WhatsApp</span>
       </button>
     </div>
   </aside>
 
   <script>
+    // --- LÓGICA DE TIENDA Y CARRITO ---
     const WHATSAPP_PHONE = "5213311848518";
     let cart = [];
 
-    // Animación Reveal al scrollear
-    const cards = document.querySelectorAll('.card');
+    const cards = document.querySelectorAll('.card-container');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
@@ -594,9 +638,38 @@
 
     cards.forEach(card => observer.observe(card));
 
+    function flipCard(cardId) {
+      const card = document.getElementById(cardId);
+      card.classList.toggle('flipped');
+    }
+
     function toggleCart() {
-      document.getElementById('cartOverlay').classList.toggle('active');
-      document.getElementById('cartDrawer').classList.toggle('active');
+      const overlay = document.getElementById('cartOverlay');
+      const drawer = document.getElementById('cartDrawer');
+      const loader = document.getElementById('loader');
+      const content = document.getElementById('drawerContent');
+      const footer = document.getElementById('drawerFooter');
+
+      const isActive = drawer.classList.contains('active');
+
+      if (!isActive) {
+        overlay.classList.add('active');
+        drawer.classList.add('active');
+        
+        loader.style.display = 'flex';
+        content.style.display = 'none';
+        footer.style.display = 'none';
+
+        setTimeout(() => {
+          loader.style.display = 'none';
+          content.style.display = 'block';
+          if (cart.length > 0) footer.style.display = 'block';
+        }, 350);
+
+      } else {
+        overlay.classList.remove('active');
+        drawer.classList.remove('active');
+      }
     }
 
     function agregarAlCarrito(nombre, precio, img) {
@@ -657,10 +730,35 @@
       const cp = document.getElementById('custCP').value.trim();
       const city = document.getElementById('custCity').value.trim();
 
-      if (!name || !address || !cp) {
-        alert("Por favor completa los campos obligatorios de entrega (Nombre, Dirección y Código Postal).");
-        return;
+      let esValido = true;
+      document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+      if (!name || name.split(' ').filter(word => word.length > 0).length < 2) {
+        document.getElementById('errName').style.display = 'block';
+        esValido = false;
       }
+
+      if (!phone || !/^\d{10}$/.test(phone.replace(/\s+/g, ''))) {
+        document.getElementById('errPhone').style.display = 'block';
+        esValido = false;
+      }
+
+      if (!address) {
+        document.getElementById('errAddress').style.display = 'block';
+        esValido = false;
+      }
+
+      if (!cp || !/^\d{5}$/.test(cp)) {
+        document.getElementById('errCP').style.display = 'block';
+        esValido = false;
+      }
+
+      if (!city) {
+        document.getElementById('errCity').style.display = 'block';
+        esValido = false;
+      }
+
+      if (!esValido) return;
 
       let resumenProductos = "";
       let totalPagar = 0;
